@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Interface</class>
+ <widget class="QMainWindow" name="Interface">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>LeftToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionReceived"/>
+   <addaction name="actionNew_message"/>
+   <addaction name="actionExit"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionReceived">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/rec/IMG/received.png</normaloff>
+     <activeon>:/rec/IMG/received.jpeg</activeon>:/rec/IMG/received.png</iconset>
+   </property>
+   <property name="text">
+    <string>Received</string>
+   </property>
+   <property name="toolTip">
+    <string>Received</string>
+   </property>
+  </action>
+  <action name="actionNew_message">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/rec/IMG/send.png</normaloff>:/rec/IMG/send.png</iconset>
+   </property>
+   <property name="text">
+    <string>New message</string>
+   </property>
+   <property name="toolTip">
+    <string>New message</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/rec/IMG/exit.png</normaloff>:/rec/IMG/exit.png</iconset>
+   </property>
+   <property name="text">
+    <string>Exit</string>
+   </property>
+   <property name="toolTip">
+    <string>Exir</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>
