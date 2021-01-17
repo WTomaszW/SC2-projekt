@@ -2,6 +2,7 @@
 #define INTERFACE_H
 
 #include <QMainWindow>
+#include <inbox.h>
 
 namespace Ui {
 class Interface;
@@ -17,9 +18,14 @@ public:
 
 private slots:
     void on_actionExit_triggered();
+    void on_actionReceived_triggered();
+    void on_pushButton_clicked();
 
 signals:
     void exit(QString);
+    void read(QString);
+    void send(QStringList);
+    void createInbox();
 
 private:
     Ui::Interface *ui;

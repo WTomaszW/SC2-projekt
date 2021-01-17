@@ -158,19 +158,49 @@ void *ThreadBehavior(void *arg)
     }
 
     bool end = true;
+    char temp [1000];
     while(end){
 
-        bzero(buff, 50);
-        read(sockid, buff, sizeof(buff));
-
-        if (strncmp("exit", buff, 4) == 0) { 
-                printf("Client Exit...\n"); 	
+        bzero(temp, 1000);
+        read(sockid, temp ,sizeof(temp));
+        //printf("temp: %s \n",temp);
+        
+        if (strncmp("exit", temp, 4) == 0) { 
+        	printf("Client Exit...\n"); 	
                 pthread_exit(NULL);
                 end = false;
-                
-            }
+        } else {
+        
+        char * tok = strtok(temp, "-");
+        char type [50];
+        char receiver [50];
+        char title [50];
+        char text [3000];
+        int k = 0;
+        for(int i = 0; i < 4 ; i++) {
+
+        	if(i == 0){ strcpy(type, tok);}
+		if(i == 1){ strcpy(receiver, tok);}
+        	if(i == 2){ strcpy(title, tok);}
+        	if(i == 3){ strcpy(text, tok);}
+
+    		tok = strtok(NULL, "-");
+    	}
+
+
+        if (strncmp("msg_send",type, 8) == 0) {
+        	printf("Odbiorca: %s \n",receiver);
+      	
+    		printf("Tutul: %s \n",title);
+      	
+    		printf("Tresc: %s \n",text);
+    		
+    	}
+    	write(sockid, title, sizeof(title));
+    	}	
     }
     return NULL;
+
 }
 
 
@@ -189,7 +219,7 @@ void handleConnection(int* connection_socket_descriptor) {
        printf("Błąd przy próbie utworzenia wątku, kod błędu: %d\n", create_result);
        exit(-1);
     }
-
+    
     #endif
 
 }
@@ -247,6 +277,7 @@ int main(int argc, char* argv[])
            exit(1);
        }
     handleConnection(connection_socket_descriptor);
+
 
 
    }

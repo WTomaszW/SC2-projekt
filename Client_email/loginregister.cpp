@@ -28,10 +28,13 @@ void LoginRegister::on_pushButton_clicked()
 void LoginRegister::on_pushButton_2_clicked()
 {
     QStringList details;
+    QString userName;
     details.append("2");
     details.append(ui->lineEdit->text());
+    userName.append(ui->lineEdit->text());
     details.append(ui->lineEdit_2->text());
     emit login(details);
+
 }
 
 void LoginRegister :: logged(QByteArray log){

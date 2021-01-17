@@ -5,6 +5,7 @@
 #include <QtNetwork>
 #include <loginregister.h>
 #include <interface.h>
+#include <inbox.h>
 
 namespace Ui {
 class MainWindow;
@@ -25,16 +26,21 @@ private slots:
   void mySocketRead();
   void Message(QString);
   void CreateInterface();
+  void SendMessage(QStringList);
+  void CreateInbox();
+  void getMessage();
 
 
 signals:
   void back_login(QByteArray);
+  void read(QString);
 
 private:
     Ui::MainWindow *ui;
     QTcpSocket *tcpSocket;
     LoginRegister *loginRegister;
     Interface *interface;
+    Inbox * inbox;
 };
 
 #endif // MAINWINDOW_H

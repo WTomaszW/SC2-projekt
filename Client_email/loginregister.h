@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <interface.h>
+#include <inbox.h>
 
 namespace Ui {
 class LoginRegister;
@@ -28,6 +29,7 @@ signals:
 
 private:
     Ui::LoginRegister *ui;
+    Inbox *inbox;
 
 };
 

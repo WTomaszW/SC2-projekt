@@ -25,17 +25,20 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
+    inbox.cpp \
         main.cpp \
         mainwindow.cpp \
     loginregister.cpp \
     interface.cpp
 
 HEADERS += \
+    inbox.h \
         mainwindow.h \
     loginregister.h \
     interface.h
 
 FORMS += \
+    inbox.ui \
         mainwindow.ui \
     loginregister.ui \
     interface.ui

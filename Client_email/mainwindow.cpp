@@ -40,6 +40,7 @@ void MainWindow :: Connected(){
     connect(this,SIGNAL(back_login(QByteArray)),loginRegister, SLOT(logged(QByteArray)));
     connect(tcpSocket,SIGNAL(readyRead()), this, SLOT( mySocketRead()));
     connect(loginRegister,SIGNAL(createInterface()),this,SLOT(CreateInterface()));
+    connect(inbox,SIGNAL(createInterface()),this,SLOT(CreateInterface()));
 
 
 
@@ -55,6 +56,7 @@ void MainWindow :: SendToServer(QStringList details){
         output.append(str);
         output.append("-");
     }
+
     tcpSocket->write(output);
     qInfo() << tcpSocket->socketDescriptor();
 
@@ -65,7 +67,6 @@ void MainWindow :: Message(QString message){
       output.append(message);
       tcpSocket->write(output);
 
-
 }
 
 void MainWindow :: CreateInterface(){
@@ -73,6 +74,26 @@ void MainWindow :: CreateInterface(){
     interface = new Interface();
     interface->show();
     connect(interface,SIGNAL(exit(QString)),this,SLOT(Message(QString)));
+    connect(interface,SIGNAL(read(QString)),this,SLOT(Message(QString)));
+    connect(interface,SIGNAL(send(QStringList)),this,SLOT(SendMessage(QStringList)));
+    connect(interface, SIGNAL(createInbox()),this,SLOT(CreateInbox()));
+
+}
+
+void MainWindow :: CreateInbox(){
+
+    inbox = new Inbox();
+    inbox->show();
+    connect(inbox,SIGNAL(exit(QString)),this,SLOT(Message(QString)));
+    //connect(this,SIGNAL(back_login(QByteArray)),inbox, SLOT(readMessage(QByteArray)));
+    //connect(tcpSocket,SIGNAL(readyRead()), this, SLOT( mySocketRead()));
+
+
+}
+
+void MainWindow :: getMessage(){
+    QString msg = tcpSocket->readAll();
+    emit(read(msg));
 }
 
 void MainWindow :: mySocketRead(){
@@ -81,7 +102,20 @@ void MainWindow :: mySocketRead(){
     QByteArray data = tcpSocket->readAll();
     qInfo() << data;
     emit back_login(data);
+}
 
+void MainWindow :: SendMessage(QStringList details){
 
+    QByteArray output;
+
+    foreach (const QString &str, details)
+    {
+        output.append(str);
+        output.append("-");
+    }
+
+    tcpSocket->write(output);
 
 }
+
+
