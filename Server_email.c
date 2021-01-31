@@ -13,7 +13,7 @@
 #include <pthread.h>
 #include <stdbool.h>
 
-#define SERVER_PORT 1234
+
 #define QUEUE_SIZE 5
 
 #define MULTITHREAD
@@ -23,7 +23,14 @@
 char logins [100][50];
 char passwords [100][50];
 int logged [100] = {0};
-int users = 0;
+int users = 1;
+int numberMessages = 0;
+int receivers[100];
+int messagesSender[100];
+char messages[100][3000];
+char messagesTitle[100][50];
+
+
 
 
 int Registered(char login [50]){
@@ -49,10 +56,9 @@ void *ThreadBehavior(void *arg)
 
 
 	char buff[50];
-
-	//Login or register to email
-
     bool notLogged = true;
+
+    int k = 0;
 
     while(notLogged){
 
@@ -65,7 +71,7 @@ void *ThreadBehavior(void *arg)
     char option [2];
     char login [50];
     char password [50];
-    int k = 0;
+
     
   	for(int i = 0; i < 3 ; i++) {
 
@@ -122,13 +128,8 @@ void *ThreadBehavior(void *arg)
         if(k == -1){
 
             bzero(buff, 50);
-
-
-
             strcpy(buff, "There is no user!" );
-
             write(sockid, buff, sizeof(buff));
-
             printf("Nie ma takiego użytkownika \n");
 
         }
@@ -159,6 +160,7 @@ void *ThreadBehavior(void *arg)
 
     bool end = true;
     char temp [1000];
+
     while(end){
 
         bzero(temp, 1000);
@@ -166,38 +168,79 @@ void *ThreadBehavior(void *arg)
         //printf("temp: %s \n",temp);
         
         if (strncmp("exit", temp, 4) == 0) { 
-        	printf("Client Exit...\n"); 	
+        	printf("Client Exit...\n");
+            logged[k] = 0;
+            bzero(buff, 50);
+            strcpy(buff, "Done");
+            write(sockid, buff, sizeof(buff));
+            	
                 pthread_exit(NULL);
                 end = false;
-        } else {
+
+        } else if (strncmp("msg_send",temp, 8) == 0){
         
         char * tok = strtok(temp, "-");
         char type [50];
         char receiver [50];
         char title [50];
         char text [3000];
-        int k = 0;
+
+
         for(int i = 0; i < 4 ; i++) {
 
         	if(i == 0){ strcpy(type, tok);}
-		if(i == 1){ strcpy(receiver, tok);}
+	        if(i == 1){ strcpy(receiver, tok);}
         	if(i == 2){ strcpy(title, tok);}
         	if(i == 3){ strcpy(text, tok);}
 
     		tok = strtok(NULL, "-");
     	}
 
+        int receiver_index = Registered(receiver);
+		
+            if(receiver_index !=-1){
 
-        if (strncmp("msg_send",type, 8) == 0) {
-        	printf("Odbiorca: %s \n",receiver);
-      	
-    		printf("Tutul: %s \n",title);
-      	
-    		printf("Tresc: %s \n",text);
+                receivers[numberMessages] = receiver_index;
+                strcpy(messages[numberMessages], text);
+                strcpy(messagesTitle[numberMessages], title);
+                messagesSender[numberMessages] = k;
+                numberMessages = numberMessages + 1;
+
+            }
+        }
+
+        else if (strncmp("msg_read",temp, 8) == 0)
+        {
+            int any = 0;
+            char buffMsg[3100];
+            for(int i = 0; i<100; i++){
+
+                if(k == receivers[i]){
+                    any = 1;
+                    bzero(buffMsg, 3100);
+                    strcpy(buffMsg,"Read");
+                    strcat(buffMsg,"-");
+                    strcat(buffMsg, messagesTitle[i]);
+                    strcat(buffMsg,"-");
+                    strcat(buffMsg,messages[i]);
+                    strcat(buffMsg,"-");
+                    strcat(buffMsg, logins[messagesSender[i]]);
+                    write(sockid, buffMsg, sizeof(buff));
+                    read(sockid, buffMsg, sizeof(buff));
+
+                }
+
+            } 
+
+            if(any == 0){
+                bzero(buffMsg, 3100);
+                strcpy(buffMsg,"Read");
+                write(sockid, buffMsg, sizeof(buff));
+            }      
+        }
+
+
     		
-    	}
-    	write(sockid, title, sizeof(title));
-    	}	
     }
     return NULL;
 
@@ -207,7 +250,7 @@ void *ThreadBehavior(void *arg)
 void handleConnection(int* connection_socket_descriptor) {
 
 
-    printf("Połączony !!! \n");
+    printf("Connected !!! \n");
     int create_result = 0;
 
     #ifdef MULTITHREAD
@@ -234,13 +277,14 @@ int main(int argc, char* argv[])
    int listen_result;
    char reuse_addr_val = 1;
    struct sockaddr_in server_address;
+   int port = atoi(argv[2]);
 
    //inicjalizacja gniazda serwera
    
    memset(&server_address, 0, sizeof(struct sockaddr));
    server_address.sin_family = AF_INET;
-   server_address.sin_addr.s_addr = inet_addr("127.0.0.1");
-   server_address.sin_port = htons(SERVER_PORT);
+   server_address.sin_addr.s_addr = inet_addr(argv[1]);
+   server_address.sin_port = htons((unsigned short)port);
 
    server_socket_descriptor = socket(AF_INET, SOCK_STREAM, 0);
    if (server_socket_descriptor < 0)
@@ -248,6 +292,7 @@ int main(int argc, char* argv[])
        fprintf(stderr, "%s: Błąd przy próbie utworzenia gniazda..\n", argv[0]);
        exit(1);
    }
+   
    setsockopt(server_socket_descriptor, SOL_SOCKET, SO_REUSEADDR, (char*)&reuse_addr_val, sizeof(reuse_addr_val));
 
 
