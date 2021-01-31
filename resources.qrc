@@ -1,7 +1,0 @@
-<RCC>
-    <qresource prefix="/rec">
-        <file>IMG/exit.png</file>
-        <file>IMG/send.png</file>
-        <file>IMG/received.png</file>
-    </qresource>
-</RCC>
