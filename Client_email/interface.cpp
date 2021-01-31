@@ -6,6 +6,7 @@
 #include <QDebug>
 
 QList<QStringList> msg;
+
 int num=0;
 
 Interface::Interface(QWidget *parent) :
@@ -30,6 +31,7 @@ void Interface::on_actionExit_triggered()
 
 void Interface::on_actionReceived_triggered()
 {
+    msg.clear();
     ui->listWidget->clear();
     emit(readMessages("msg_read"));
 }
@@ -37,12 +39,12 @@ void Interface::on_actionReceived_triggered()
 void Interface::on_pushButton_clicked()
 {
     ui->listWidget->clear();
-    QStringList msg;
-    msg.append("msg_send");
-    msg.append(ui->lineEdit->text());
-    msg.append(ui->lineEdit_2->text());
-    msg.append(ui->plainTextEdit->toPlainText());
-    emit(send(msg));
+    QStringList msg2;
+    msg2.append("msg_send");
+    msg2.append(ui->lineEdit->text());
+    msg2.append(ui->lineEdit_2->text());
+    msg2.append(ui->plainTextEdit->toPlainText());
+    emit(send(msg2));
 
 }
 
@@ -92,6 +94,7 @@ void Interface :: DisplayMessage(QStringList message){
 
 void Interface :: runn(const QModelIndex &index){
 
+    qInfo()<< index.row();
     inbox = new Inbox(msg.at(index.row()));
     inbox->show();
 

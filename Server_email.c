@@ -207,6 +207,16 @@ void *ThreadBehavior(void *arg)
                 numberMessages = numberMessages + 1;
 
             }
+            else{
+
+                receivers[numberMessages] = k;
+                strcpy(messages[numberMessages], "Failed to send");
+                strcpy(messagesTitle[numberMessages], "Failed to send");
+                messagesSender[numberMessages] = k;
+                numberMessages = numberMessages + 1;
+
+
+            }
         }
 
         else if (strncmp("msg_read",temp, 8) == 0)
