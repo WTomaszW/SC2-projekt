@@ -12,7 +12,7 @@ class Inbox : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit Inbox(QWidget *parent = nullptr);
+    explicit Inbox(QStringList, QWidget *parent = nullptr);
     ~Inbox();
 
 private slots:

@@ -23,9 +23,6 @@ void MainWindow::on_pushButton_clicked()
 
     connect(tcpSocket,SIGNAL(connected()),this,SLOT(Connected()));
 
-
-
-
     ui->label_2->setText("Failed to connect!");
     ui->label_2->setStyleSheet("QLabel {color: blue}");
 
@@ -40,10 +37,6 @@ void MainWindow :: Connected(){
     connect(this,SIGNAL(back_login(QByteArray)),loginRegister, SLOT(logged(QByteArray)));
     connect(tcpSocket,SIGNAL(readyRead()), this, SLOT( mySocketRead()));
     connect(loginRegister,SIGNAL(createInterface()),this,SLOT(CreateInterface()));
-    connect(inbox,SIGNAL(createInterface()),this,SLOT(CreateInterface()));
-
-
-
 
 }
 
@@ -58,7 +51,7 @@ void MainWindow :: SendToServer(QStringList details){
     }
 
     tcpSocket->write(output);
-    qInfo() << tcpSocket->socketDescriptor();
+
 
 }
 
@@ -77,31 +70,32 @@ void MainWindow :: CreateInterface(){
     connect(interface,SIGNAL(read(QString)),this,SLOT(Message(QString)));
     connect(interface,SIGNAL(send(QStringList)),this,SLOT(SendMessage(QStringList)));
     connect(interface, SIGNAL(createInbox()),this,SLOT(CreateInbox()));
-
-}
-
-void MainWindow :: CreateInbox(){
-
-    inbox = new Inbox();
-    inbox->show();
-    connect(inbox,SIGNAL(exit(QString)),this,SLOT(Message(QString)));
-    //connect(this,SIGNAL(back_login(QByteArray)),inbox, SLOT(readMessage(QByteArray)));
-    //connect(tcpSocket,SIGNAL(readyRead()), this, SLOT( mySocketRead()));
+    connect(interface,SIGNAL(readMessages(QString)),this,SLOT(Message(QString)));
+    connect(this,SIGNAL(message(QStringList)),interface,SLOT(DisplayMessage(QStringList)));
 
 
 }
 
-void MainWindow :: getMessage(){
-    QString msg = tcpSocket->readAll();
-    emit(read(msg));
-}
 
 void MainWindow :: mySocketRead(){
 
-    qDebug() <<"here C1 bytes = " << tcpSocket->bytesAvailable();
     QByteArray data = tcpSocket->readAll();
-    qInfo() << data;
+    QString msg(data);
+    QStringList listMsg = msg.split("-");
+    if(listMsg.contains("Read")){
+        emit message(listMsg);
+    }
+    else if(msg.contains("Done")){
+
+
+     tcpSocket->close();
+     QApplication ::quit();
+    }
+
+    else{
+
     emit back_login(data);
+    }
 }
 
 void MainWindow :: SendMessage(QStringList details){
@@ -117,5 +111,6 @@ void MainWindow :: SendMessage(QStringList details){
     tcpSocket->write(output);
 
 }
+
 
 

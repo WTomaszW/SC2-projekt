@@ -6,8 +6,6 @@ LoginRegister::LoginRegister(QWidget *parent) :
     ui(new Ui::LoginRegister)
 {
     ui->setupUi(this);
-
-
 }
 
 LoginRegister::~LoginRegister()

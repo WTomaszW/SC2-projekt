@@ -28,12 +28,12 @@ private slots:
   void CreateInterface();
   void SendMessage(QStringList);
   void CreateInbox();
-  void getMessage();
 
 
 signals:
   void back_login(QByteArray);
   void read(QString);
+  void message(QStringList);
 
 private:
     Ui::MainWindow *ui;

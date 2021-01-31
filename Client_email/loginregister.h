@@ -27,6 +27,7 @@ signals:
     void login(QStringList);
     void createInterface();
 
+
 private:
     Ui::LoginRegister *ui;
     Inbox *inbox;
